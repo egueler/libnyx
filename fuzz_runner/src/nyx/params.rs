@@ -47,8 +47,16 @@ impl QemuParams {
             },
             FuzzRunnerConfig::QemuSnapshot(x) => {
                 cmd.push(x.qemu_binary.to_string());
-                cmd.push("-drive".to_string());
-                cmd.push(format!("file={},index=0,media=disk", x.hda.to_string()));
+                if x.hda.is_some() {
+                    cmd.push("-drive".to_string());
+                    cmd.push(format!("file={},index=0,media=disk", x.hda.unwrap().to_string()));
+                }
+                if x.cdrom.is_some() {
+                    cmd.push("-cdrom".to_string());
+                    cmd.push(x.cdrom.unwrap().to_string());
+                    cmd.push("-boot".to_string());
+                    cmd.push("d".to_string());
+                }
             },
         }
 

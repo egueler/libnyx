@@ -65,7 +65,8 @@ pub enum SnapshotPath {
 #[derive(Clone, Debug)]
 pub struct QemuSnapshotConfig {
     pub qemu_binary: String,
-    pub hda: String,
+    pub hda: Option<String>,
+    pub cdrom: Option<String>,
     pub presnapshot: String,
     pub snapshot_path: SnapshotPath,
     pub debug: bool,
@@ -75,15 +76,31 @@ impl QemuSnapshotConfig{
     pub fn new_from_loader(default_config_folder: &str, default: QemuSnapshotConfigLoader, config: QemuSnapshotConfigLoader) -> Self {
 
         let mut qemu_binary = config.qemu_binary.or(default.qemu_binary).expect("no qemu_binary specified");
-        let mut hda = config.hda.or(default.hda).expect("no hda specified");
+        let mut hda = config.hda;
+        let mut cdrom = config.cdrom;
+
+        if hda.is_none() && cdrom.is_none() {
+            panic!("no hda or cdrom specified");
+        }
+        let _hda = if hda.is_some() {
+            Some(into_absolute_path(default_config_folder, hda.unwrap()))
+        } else {
+            None
+        };
+        let _cdrom = if cdrom.is_some() {
+            Some(into_absolute_path(default_config_folder, cdrom.unwrap()))
+        } else {
+            None
+        };
+
         let mut presnapshot = config.presnapshot.or(default.presnapshot).expect("no presnapshot specified");
         qemu_binary = into_absolute_path(default_config_folder, qemu_binary);
-        hda = into_absolute_path(default_config_folder, hda);
         presnapshot = into_absolute_path(default_config_folder, presnapshot);
 
         Self{
             qemu_binary: qemu_binary,
-            hda: hda,
+            hda: _hda,
+            cdrom: _cdrom,
             presnapshot: presnapshot,
             snapshot_path: config.snapshot_path.or(default.snapshot_path).expect("no snapshot_path specified"),
             debug: config.debug.or(default.debug).expect("no debug specified"),

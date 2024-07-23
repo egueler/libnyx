@@ -15,6 +15,7 @@ pub struct QemuKernelConfigLoader {
 pub struct QemuSnapshotConfigLoader {
     pub qemu_binary: Option<String>,
     pub hda: Option<String>,
+    pub cdrom: Option<String>,
     pub presnapshot: Option<String>,
     pub snapshot_path: Option<SnapshotPath>,
     pub debug: Option<bool>,
