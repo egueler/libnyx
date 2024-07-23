@@ -76,8 +76,8 @@ impl QemuSnapshotConfig{
     pub fn new_from_loader(default_config_folder: &str, default: QemuSnapshotConfigLoader, config: QemuSnapshotConfigLoader) -> Self {
 
         let mut qemu_binary = config.qemu_binary.or(default.qemu_binary).expect("no qemu_binary specified");
-        let mut hda = config.hda;
-        let mut cdrom = config.cdrom;
+        let hda = config.hda.or(default.hda);
+        let cdrom = config.cdrom.or(default.cdrom);
 
         if hda.is_none() && cdrom.is_none() {
             panic!("no hda or cdrom specified");
