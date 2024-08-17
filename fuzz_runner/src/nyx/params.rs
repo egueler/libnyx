@@ -28,7 +28,11 @@ impl QemuParams {
         
         let workdir = &fuzzer_config.fuzz.workdir_path;
 
-        let debug = fuzzer_config.runtime.debug_mode();
+        // Match against the FuzzRunnerConfig enum to access the debug field
+        let debug = match &fuzzer_config.runner {
+            FuzzRunnerConfig::QemuKernel(config) => config.debug,
+            FuzzRunnerConfig::QemuSnapshot(config) => config.debug,
+        };
 
         let qemu_aux_buffer_filename = format!("{}/aux_buffer_{}", workdir, qemu_id);
         let control_filename = format!("{}/interface_{}", workdir, qemu_id);
@@ -61,12 +65,16 @@ impl QemuParams {
         }
 
         /* generic QEMU-Nyx parameters */
-        if !debug{
-            cmd.push("-display".to_string());
-            cmd.push("none".to_string());
-        } else {
+        if debug {
             cmd.push("-vnc".to_string());
             cmd.push(format!(":{}",qemu_id));
+            cmd.push("-d".to_string());
+            cmd.push("cpu_reset,guest_errors".to_string());
+            cmd.push("-D".to_string());
+            cmd.push("/tmp/qemu_log.txt".to_string());
+        } else {
+            cmd.push("-display".to_string());
+            cmd.push("none".to_string());
         }
 
         cmd.push("-serial".to_string());
@@ -87,9 +95,6 @@ impl QemuParams {
 
         cmd.push("-net".to_string());
         cmd.push("none".to_string());
-
-        cmd.push("-k".to_string());
-        cmd.push("de".to_string());
 
         cmd.push("-m".to_string());
         cmd.push(fuzzer_config.fuzz.mem_limit.to_string());
