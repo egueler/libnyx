@@ -369,6 +369,10 @@ impl NyxProcess {
         self.set_input_ptr(buffer.as_ptr(), size);
     }
 
+    pub fn set_input_str(&mut self, buffer: &str) {
+        self.set_input(buffer.as_bytes(), buffer.len() as u32);
+    }
+
     pub fn set_hprintf_fd(&mut self, fd: i32) {
 
         /* sanitiy check to prevent invalid file descriptors via F_GETFD */

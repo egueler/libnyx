@@ -99,13 +99,13 @@ impl QemuSnapshotConfig{
         presnapshot = into_absolute_path(default_config_folder, presnapshot);
 
         // debug print all information
-        if config.debug.is_some() && config.debug.unwrap() {
+        if debug.is_some() && debug.unwrap() {
             println!("qemu_binary: {:?}", qemu_binary);
             println!("hda: {:?}", _hda);
             println!("cdrom: {:?}", _cdrom);
             println!("presnapshot: {:?}", presnapshot);
             println!("snapshot_path: {:?}", config.snapshot_path.clone().or(default.snapshot_path.clone()).expect("no snapshot_path specified"));
-            println!("debug: {:?}", config.debug.or(default.debug).expect("no debug specified"));
+            println!("debug: {:?}", debug.expect("no debug specified"));
         }
 
         Self{
