@@ -132,7 +132,7 @@ impl QemuParams {
         cmd.push("kAFL64-v1".to_string());
 
         cmd.push("-cpu".to_string());
-        cmd.push("kAFL64-Hypervisor-v1".to_string());
+        cmd.push("kAFL64-Hypervisor-v2".to_string());
 
 
         if fuzzer_config.runtime.reuse_root_snapshot_path().is_some() {
